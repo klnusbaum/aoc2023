@@ -2,7 +2,7 @@ package problems.dayone
 
 import java.io.File
 
-val calibrationValues = "input/day1/calibration_values.txt"
+const val calibrationValues = "input/day1/calibration_values.txt"
 
 fun part1() {
     val sum = File(calibrationValues)
@@ -15,8 +15,8 @@ fun part1() {
 fun sumLines(lines: Sequence<String>) = lines.map { parseLine(it) }.sum()
 
 fun parseLine(input: String): Int {
-    val nums = input.filter { c -> c in '0'..'9' }
-    return "${nums.first()}${nums.last()}".toInt()
+    val numbers = input.filter { c -> c in '0'..'9' }
+    return "${numbers.first()}${numbers.last()}".toInt()
 }
 
 fun part2() {
