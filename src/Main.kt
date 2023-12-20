@@ -1,4 +1,3 @@
 fun main() {
-    problems.dayone.part1()
-    problems.dayone.part2()
+    println("go run the individual days for each answer")
 }

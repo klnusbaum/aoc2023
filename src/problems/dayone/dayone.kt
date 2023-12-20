@@ -4,6 +4,10 @@ import java.io.File
 
 const val calibrationValues = "input/day1/calibration_values.txt"
 
+fun main() {
+    part1()
+    part2()
+}
 fun part1() {
     val sum = File(calibrationValues)
         .bufferedReader()
