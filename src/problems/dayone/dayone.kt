@@ -9,7 +9,7 @@ fun parseLine(input: String): Int {
 
 fun sumLines(lines: Sequence<String>) = lines.map { line -> parseLine(line) }.sum()
 
-fun runDayOne() {
+fun part1() {
     val calibrationValues = File("input/day1/calibration_values.txt")
     val sum = calibrationValues.useLines { lines -> sumLines(lines) }
 

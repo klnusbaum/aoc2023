@@ -1,4 +1,3 @@
-import problems.dayone.runDayOne
 fun main() {
-    runDayOne()
+    problems.dayone.part1()
 }
