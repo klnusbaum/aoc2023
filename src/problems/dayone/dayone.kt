@@ -2,9 +2,12 @@ package problems.dayone
 
 import java.io.File
 
+val calibrationValues = "input/day1/calibration_values.txt"
+
 fun part1() {
-    val calibrationValues = File("input/day1/calibration_values.txt")
-    val sum = calibrationValues.useLines { sumLines(it) }
+    val sum = File(calibrationValues)
+        .bufferedReader()
+        .useLines { sumLines(it) }
 
     println("Sum of values is $sum")
 }
@@ -17,13 +20,14 @@ fun parseLine(input: String): Int {
 }
 
 fun part2() {
-    val calibrationValues = File("input/day1/calibration_values.txt")
-    val sum = calibrationValues.useLines { sumLinesV2(it) }
+    val sum = File(calibrationValues)
+        .bufferedReader()
+        .useLines { sumLinesV2(it) }
 
     println("Sum of values is $sum")
 }
 
-fun sumLinesV2(lines: Sequence<String>) = lines.map{ parseLineV2(it) }.sum()
+fun sumLinesV2(lines: Sequence<String>) = lines.map { parseLineV2(it) }.sum()
 
 fun parseLineV2(input: String): Int {
     val first = input.findAnyOf(numTargets)?.second?.toNumString()
@@ -37,7 +41,7 @@ val numTargets = listOf(
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"
 )
 
-fun String.toNumString() = when(this) {
+fun String.toNumString() = when (this) {
     "one" -> "1"
     "two" -> "2"
     "three" -> "3"
