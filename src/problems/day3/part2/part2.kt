@@ -1,4 +1,4 @@
-package problems.daythree.part2
+package problems.day3.part2
 
 import java.io.File
 
