@@ -2,15 +2,15 @@ package problems.day3.part1
 
 import java.io.File
 
-//const val testFile = "input/day3/test.txt"
-const val part_numbers = "input/day3/part_numbers.txt"
+//private const val testFile = "input/day3/test.txt"
+private const val part_numbers = "input/day3/part_numbers.txt"
 
 fun main() {
     val partNumberSum = File(part_numbers).bufferedReader().useLines { sumPartNumbers(it) }
     println("Part Number Sum: $partNumberSum")
 }
 
-fun sumPartNumbers(lines: Sequence<String>): Int {
+private fun sumPartNumbers(lines: Sequence<String>): Int {
     val possiblePNs: MutableList<PossiblePN> = mutableListOf()
     val symbols: MutableMap<Int, Set<Int>> = mutableMapOf()
     lines.forEachIndexed {row, line ->
@@ -22,18 +22,18 @@ fun sumPartNumbers(lines: Sequence<String>): Int {
     return possiblePNs.filter { it.adjacentToSymbol(symbols) }.sumOf { it.value }
 }
 
-fun parseLine(line: String, row: Int) = LineResult(
+private fun parseLine(line: String, row: Int) = LineResult(
     accumulateNumbers(line, row),
     recordSymbols(line),
 )
 
-fun accumulateNumbers(line: String, row: Int): List<PossiblePN> {
+private fun accumulateNumbers(line: String, row: Int): List<PossiblePN> {
     val accumulator = PossiblePNAccumulator(row)
     line.forEach { accumulator.nextChar(it) }
     return accumulator.end()
 }
 
-fun recordSymbols(line: String): Set<Int> {
+private fun recordSymbols(line: String): Set<Int> {
     val symbols = mutableSetOf<Int>()
     line.forEachIndexed { index, c ->  if (c.isSymbol()) symbols.add(index)}
     return symbols
@@ -41,7 +41,7 @@ fun recordSymbols(line: String): Set<Int> {
 
 private fun Char.isSymbol() = (this !in '0'..'9') and (this != '.')
 
-data class PossiblePN(val value: Int, val row: Int, val startCol: Int, val endCol: Int) {
+private data class PossiblePN(val value: Int, val row: Int, val startCol: Int, val endCol: Int) {
     fun adjacentToSymbol(symbols: Map<Int, Set<Int>>): Boolean {
         return aboveRowContainsSymbol(symbols) or
                 rowContainsSymbol(symbols) or
@@ -66,9 +66,9 @@ data class PossiblePN(val value: Int, val row: Int, val startCol: Int, val endCo
     }
 }
 
-data class LineResult(val possiblePNs: List<PossiblePN>, val symbols: Set<Int>)
+private data class LineResult(val possiblePNs: List<PossiblePN>, val symbols: Set<Int>)
 
-class PossiblePNAccumulator(private val row: Int) {
+private class PossiblePNAccumulator(private val row: Int) {
     private val possiblePNs = mutableListOf<PossiblePN>()
     private val currentNumber = StringBuilder()
     private var currentCol = 0

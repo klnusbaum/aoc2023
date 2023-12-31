@@ -5,8 +5,8 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.sqrt
 
-const val inputFile = "input/day6/input.txt"
-//const val testFile = "input/day6/test.txt"
+private const val inputFile = "input/day6/input.txt"
+//private const val testFile = "input/day6/test.txt"
 
 fun main() {
     val productOfNumBeats = File(inputFile).bufferedReader().useLines { multiplyNumBeats(it) }

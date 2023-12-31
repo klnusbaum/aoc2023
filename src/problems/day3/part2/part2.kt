@@ -2,12 +2,10 @@ package problems.day3.part2
 
 import java.io.File
 
-//const val testFile = "input/day3/test.txt"
-const val part_numbers = "input/day3/part_numbers.txt"
+//private const val testFile = "input/day3/test.txt"
+private const val part_numbers = "input/day3/part_numbers.txt"
 
 fun main() {
-//    val testGearRatioSum = File(testFile).bufferedReader().useLines { sumGearRatios(it) }
-//    println("Test Gear ratio sum: $testGearRatioSum")
     val gearRatioSum = File(part_numbers).bufferedReader().useLines { sumGearRatios(it) }
     println("Part Number Sum: $gearRatioSum")
 }
@@ -65,7 +63,7 @@ private fun Pair<Int, Int>.gearRatio(possibleGears: Map<Int, Map<Int, Int>>) : I
 
 private fun Set<Int>.toRowCols(row: Int): List<Pair<Int, Int>> = this.map {row to it}
 
-class PossibleGearAccumulator() {
+private class PossibleGearAccumulator() {
     private val possibleGears = mutableMapOf<Int,Int>()
     private val currentNumber = StringBuilder()
     private var currentCol = 0

@@ -3,8 +3,8 @@ package problems.day4.part2
 import java.io.File
 import java.util.*
 
-//const val testFile = "input/day4/test.txt"
-const val cardsFile = "input/day4/cards.txt"
+//private const val testFile = "input/day4/test.txt"
+private const val cardsFile = "input/day4/cards.txt"
 
 fun main() {
     val totalCardsWon = File(cardsFile).bufferedReader().useLines { totalCards(it) }

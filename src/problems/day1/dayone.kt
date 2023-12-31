@@ -2,13 +2,13 @@ package problems.day1
 
 import java.io.File
 
-const val calibrationValues = "input/day1/calibration_values.txt"
+private const val calibrationValues = "input/day1/calibration_values.txt"
 
 fun main() {
     part1()
     part2()
 }
-fun part1() {
+private fun part1() {
     val sum = File(calibrationValues)
         .bufferedReader()
         .useLines { sumLines(it) }
@@ -16,14 +16,14 @@ fun part1() {
     println("Sum of values is $sum")
 }
 
-fun sumLines(lines: Sequence<String>) = lines.map { parseLine(it) }.sum()
+private fun sumLines(lines: Sequence<String>) = lines.map { parseLine(it) }.sum()
 
-fun parseLine(input: String): Int {
+private fun parseLine(input: String): Int {
     val numbers = input.filter { c -> c in '0'..'9' }
     return "${numbers.first()}${numbers.last()}".toInt()
 }
 
-fun part2() {
+private fun part2() {
     val sum = File(calibrationValues)
         .bufferedReader()
         .useLines { sumLinesV2(it) }
@@ -31,21 +31,21 @@ fun part2() {
     println("Sum of values is $sum")
 }
 
-fun sumLinesV2(lines: Sequence<String>) = lines.map { parseLineV2(it) }.sum()
+private fun sumLinesV2(lines: Sequence<String>) = lines.map { parseLineV2(it) }.sum()
 
-fun parseLineV2(input: String): Int {
+private fun parseLineV2(input: String): Int {
     val first = input.findAnyOf(numTargets)?.second?.toNumString()
     val last = input.findLastAnyOf(numTargets)?.second?.toNumString()
 
     return "$first$last".toInt()
 }
 
-val numTargets = listOf(
+private val numTargets = listOf(
     "1", "2", "3", "4", "5", "6", "7", "8", "9",
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"
 )
 
-fun String.toNumString() = when (this) {
+private fun String.toNumString() = when (this) {
     "one" -> "1"
     "two" -> "2"
     "three" -> "3"

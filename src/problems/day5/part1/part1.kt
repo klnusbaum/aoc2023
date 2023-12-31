@@ -3,8 +3,8 @@ package problems.day5.part1
 import java.io.File
 import java.util.*
 
-//const val testFile = "input/day5/test.txt"
-const val inputFile = "input/day5/input.txt"
+//private const val testFile = "input/day5/test.txt"
+private const val inputFile = "input/day5/input.txt"
 
 fun main() {
     val lowestLocationNum = File(inputFile).bufferedReader().useLines { lowestLocationNumber(it) }
