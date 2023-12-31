@@ -61,20 +61,16 @@ private fun List<Card>.toHandType(): HandType {
     return strongestHandType(typeHistogram)
 }
 
-private fun strongestHandType(typeHistogram: Map<Card, UInt>): HandType {
-    if (typeHistogram.getOrDefault(Card.JOKER, 0u) == 0u) {
-        return simpleHandType(typeHistogram)
+private fun strongestHandType(typeHistogram: Map<Card, UInt>): HandType = when (typeHistogram[Card.JOKER]) {
+    null -> simpleHandType(typeHistogram)
+    0u -> simpleHandType(typeHistogram)
+    5u -> HandType.FIVE_OF_A_KIND
+    else -> typeHistogram.keys.filter { it != Card.JOKER }.maxOf {
+        val possibleHistogram = typeHistogram.toMutableMap()
+        possibleHistogram[Card.JOKER] = possibleHistogram[Card.JOKER]!! - 1u
+        possibleHistogram[it] = possibleHistogram[it]!! + 1u
+        strongestHandType(possibleHistogram)
     }
-
-    val removedJoker = typeHistogram.toMutableMap()
-    removedJoker[Card.JOKER] = removedJoker[Card.JOKER]!! - 1u
-
-    return Card.entries.filter { it != Card.JOKER }
-        .maxOf {
-            val possibleHisto = removedJoker.toMutableMap()
-            possibleHisto[it] = possibleHisto.getOrDefault(it, 0u) + 1u
-            strongestHandType(possibleHisto)
-        }
 }
 
 private fun simpleHandType(typeHistogram: Map<Card, UInt>): HandType = when {
