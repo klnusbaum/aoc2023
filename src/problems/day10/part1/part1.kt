@@ -20,102 +20,108 @@ fun farthestTileDistance(it: Sequence<String>): Int {
 }
 
 private class BoardBuilder {
-    private val tiles = mutableMapOf<Int, MutableMap<Int, Tile>>()
-    private var startRow: Int? = null
-    private var startCol: Int? = null
+    private val tiles = mutableMapOf<Location, Tile>()
+    private var start: Location? = null
     private var rowIndex = 0
 
     fun nextLine(line: String): BoardBuilder {
-        val row = mutableMapOf<Int, Tile>()
         line.forEachIndexed { colIndex, c ->
             val tile = c.toTile()
+            val location = Location(rowIndex, colIndex)
             if (tile is Tile.Start) {
-                startRow = rowIndex
-                startCol = colIndex
+                start = location
             }
-            row[colIndex] = tile
+            tiles[location] = tile
         }
 
-        tiles[rowIndex] = row
         rowIndex++
         return this
     }
 
     fun build() = Board(
         tiles,
-        startRow ?: throw IllegalArgumentException("start x position not found"),
-        startCol ?: throw IllegalArgumentException("start y position not found")
+        start ?: throw IllegalArgumentException("No location found for start"),
     )
 }
 
-private class Board(val tiles: Map<Int, Map<Int, Tile>>, val startRow: Int, val startCol: Int) {
+private class Board(val tiles: Map<Location, Tile>, val start: Location) {
     fun totalPipeDistance(): Int {
-        var (previousRow, previousCol) = Pair(startRow, startCol)
-        var (currentRow, currentCol) = nextFromStart(startRow, startCol)
+        var previousLocation = start
+        var currentLocation = nextFromStart()
         var distance = 1
-        while (!isStart(currentRow, currentCol)) {
-            val (nextRow, nextCol) = nextTile(previousRow, previousCol, currentRow, currentCol)
-            previousRow = currentRow
-            previousCol = currentCol
-            currentRow = nextRow
-            currentCol = nextCol
+        while (currentLocation != start) {
+            val nextLocation = nextLocation(previousLocation, currentLocation)
+            previousLocation = currentLocation
+            currentLocation = nextLocation
             distance++
         }
         return distance
     }
 
-    private fun nextFromStart(currentRow: Int, currentCol: Int): Pair<Int, Int> {
-        val northernTile = tiles[currentRow - 1]?.get(currentCol)
-        if (northernTile?.opensOn(Opening.SOUTH) == true) {
-            return Pair(currentRow - 1, currentCol)
+    private fun nextFromStart(): Location {
+        val northernLocation = start.toNorth()
+        if (tiles[northernLocation]?.opensOn(Opening.SOUTH) == true) {
+            return northernLocation
         }
 
-        val southernTile = tiles[currentRow + 1]?.get(currentCol)
-        if (southernTile?.opensOn(Opening.NORTH) == true) {
-            return Pair(currentRow + 1, currentCol)
-        }
-        val westernTile = tiles[currentRow]?.get(currentCol - 1)
-        if (westernTile?.opensOn(Opening.EAST) == true) {
-            return Pair(currentRow, currentCol - 1)
+        val southernLocation = start.toSouth()
+        if (tiles[southernLocation]?.opensOn(Opening.NORTH) == true) {
+            return southernLocation
         }
 
-        val easternTile = tiles[currentRow]?.get(currentCol + 1)
-        if (easternTile?.opensOn(Opening.WEST) == true) {
-            return Pair(currentRow, currentCol + 1)
+        val westernLocation = start.toWest()
+        if (tiles[westernLocation]?.opensOn(Opening.EAST) == true) {
+            return westernLocation
+        }
+
+        val easternLocation = start.toEast()
+        if (tiles[easternLocation]?.opensOn(Opening.WEST) == true) {
+            return easternLocation
         }
 
         throw IllegalArgumentException("No tile accessible from start")
     }
 
-    private fun nextTile(previousRow: Int, previousCol: Int, currentRow: Int, currentCol: Int): Pair<Int, Int> {
-        val currentTile =
-            tiles[currentRow]?.get(currentCol) ?: throw IllegalArgumentException("No Tile at $currentRow $currentCol")
-        if (currentTile.opensOn(Opening.NORTH) && !(currentRow - 1 == previousRow && currentCol == previousCol)) {
-            if(tiles[currentRow-1]?.get(currentCol)?.opensOn(Opening.SOUTH) == true) {
-                return Pair(currentRow-1, currentCol)
-            }
-        }
-        if (currentTile.opensOn(Opening.SOUTH) && !(currentRow + 1 == previousRow && currentCol == previousCol)) {
-            if(tiles[currentRow+1]?.get(currentCol)?.opensOn(Opening.NORTH) == true) {
-                return Pair(currentRow+1, currentCol)
-            }
-        }
-        if (currentTile.opensOn(Opening.WEST) && !(currentRow == previousRow && currentCol-1 == previousCol)) {
-            if(tiles[currentRow]?.get(currentCol-1)?.opensOn(Opening.EAST) == true) {
-                return Pair(currentRow, currentCol-1)
-            }
-        }
-        if (currentTile.opensOn(Opening.EAST) && !(currentRow == previousRow && currentCol+1 == previousCol)) {
-            if(tiles[currentRow]?.get(currentCol+1)?.opensOn(Opening.WEST) == true) {
-                return Pair(currentRow, currentCol+1)
+    private fun nextLocation(previousLocation: Location, currentLocation: Location): Location {
+        val currentTile = tiles[currentLocation] ?: throw IllegalArgumentException("No Tile at $currentLocation")
+
+        if (currentTile.opensOn(Opening.NORTH)) {
+            val northernLocation = currentLocation.toNorth()
+            if (tiles[northernLocation]?.opensOn(Opening.SOUTH) == true && northernLocation != previousLocation) {
+                return northernLocation
             }
         }
 
-        throw IllegalArgumentException("No next tile from $currentRow $currentCol")
+        if (currentTile.opensOn(Opening.SOUTH)) {
+            val southernLocation = currentLocation.toSouth()
+            if (tiles[southernLocation]?.opensOn(Opening.NORTH) == true && southernLocation != previousLocation) {
+                return southernLocation
+            }
+        }
+
+        if (currentTile.opensOn(Opening.WEST)) {
+            val westernLocation = currentLocation.toWest()
+            if (tiles[westernLocation]?.opensOn(Opening.EAST) == true && westernLocation != previousLocation) {
+                return westernLocation
+            }
+        }
+
+        if (currentTile.opensOn(Opening.EAST)) {
+            val easternLocation = currentLocation.toEast()
+            if (tiles[easternLocation]?.opensOn(Opening.WEST) == true && easternLocation != previousLocation) {
+                return easternLocation
+            }
+        }
+
+        throw IllegalArgumentException("No next tile from $currentLocation")
     }
+}
 
-    private fun isStart(row: Int, col: Int) = row == startRow && col == startCol
-
+private data class Location(val row: Int, val col: Int) {
+    fun toNorth(): Location = Location(row - 1, col)
+    fun toSouth(): Location = Location(row + 1, col)
+    fun toWest(): Location = Location(row, col - 1)
+    fun toEast(): Location = Location(row, col + 1)
 }
 
 private sealed class Tile {
