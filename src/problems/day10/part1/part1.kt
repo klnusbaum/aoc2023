@@ -62,25 +62,25 @@ private class Board(val tiles: Map<Location, Tile>, val start: Location) {
     private fun nextFromStart(): Pair<Location, Tile> {
         val northernLocation = start.toNorth()
         val northernTile = tiles[northernLocation]
-        if (northernTile?.opensOn(Opening.SOUTH) == true) {
+        if (northernTile?.opensOn(Direction.SOUTH) == true) {
             return Pair(northernLocation, northernTile)
         }
 
         val southernLocation = start.toSouth()
         val southernTile = tiles[southernLocation]
-        if (southernTile?.opensOn(Opening.NORTH) == true) {
+        if (southernTile?.opensOn(Direction.NORTH) == true) {
             return Pair(southernLocation, southernTile)
         }
 
         val westernLocation = start.toWest()
         val westernTile = tiles[westernLocation]
-        if (westernTile?.opensOn(Opening.EAST) == true) {
+        if (westernTile?.opensOn(Direction.EAST) == true) {
             return Pair(westernLocation, westernTile)
         }
 
         val easternLocation = start.toEast()
         val easternTile = tiles[easternLocation]
-        if (easternTile?.opensOn(Opening.WEST) == true) {
+        if (easternTile?.opensOn(Direction.WEST) == true) {
             return Pair(easternLocation, easternTile)
         }
 
@@ -92,34 +92,34 @@ private class Board(val tiles: Map<Location, Tile>, val start: Location) {
         currentLocation: Location,
         currentTile: Tile
     ): Pair<Location, Tile> {
-        if (currentTile.opensOn(Opening.NORTH)) {
+        if (currentTile.opensOn(Direction.NORTH)) {
             val northernLocation = currentLocation.toNorth()
             val northernTile = tiles[northernLocation]
-            if (northernTile?.opensOn(Opening.SOUTH) == true && northernLocation != previousLocation) {
+            if (northernTile?.opensOn(Direction.SOUTH) == true && northernLocation != previousLocation) {
                 return Pair(northernLocation, northernTile)
             }
         }
 
-        if (currentTile.opensOn(Opening.SOUTH)) {
+        if (currentTile.opensOn(Direction.SOUTH)) {
             val southernLocation = currentLocation.toSouth()
             val southernTile = tiles[southernLocation]
-            if (southernTile?.opensOn(Opening.NORTH) == true && southernLocation != previousLocation) {
+            if (southernTile?.opensOn(Direction.NORTH) == true && southernLocation != previousLocation) {
                 return Pair(southernLocation, southernTile)
             }
         }
 
-        if (currentTile.opensOn(Opening.WEST)) {
+        if (currentTile.opensOn(Direction.WEST)) {
             val westernLocation = currentLocation.toWest()
             val westernTile = tiles[westernLocation]
-            if (westernTile?.opensOn(Opening.EAST) == true && westernLocation != previousLocation) {
+            if (westernTile?.opensOn(Direction.EAST) == true && westernLocation != previousLocation) {
                 return Pair(westernLocation, westernTile)
             }
         }
 
-        if (currentTile.opensOn(Opening.EAST)) {
+        if (currentTile.opensOn(Direction.EAST)) {
             val easternLocation = currentLocation.toEast()
             val easternTile = tiles[easternLocation]
-            if (easternTile?.opensOn(Opening.WEST) == true && easternLocation != previousLocation) {
+            if (easternTile?.opensOn(Direction.WEST) == true && easternLocation != previousLocation) {
                 return Pair(easternLocation, easternTile)
             }
         }
@@ -136,30 +136,30 @@ private data class Location(val row: Int, val col: Int) {
 }
 
 private sealed class Tile {
-    data class Pipe(val first: Opening, val second: Opening) : Tile()
+    data class Pipe(val first: Direction, val second: Direction) : Tile()
     data object Ground : Tile()
     data object Start : Tile()
 
-    fun opensOn(opening: Opening) = when (this) {
-        is Pipe -> this.first == opening || this.second == opening
+    fun opensOn(direction: Direction) = when (this) {
+        is Pipe -> this.first == direction || this.second == direction
         is Start -> true
         else -> false
     }
 }
 
 private fun Char.toTile(): Tile = when (this) {
-    '|' -> Tile.Pipe(Opening.NORTH, Opening.SOUTH)
-    '-' -> Tile.Pipe(Opening.EAST, Opening.WEST)
-    'L' -> Tile.Pipe(Opening.NORTH, Opening.EAST)
-    'J' -> Tile.Pipe(Opening.NORTH, Opening.WEST)
-    '7' -> Tile.Pipe(Opening.SOUTH, Opening.WEST)
-    'F' -> Tile.Pipe(Opening.SOUTH, Opening.EAST)
+    '|' -> Tile.Pipe(Direction.NORTH, Direction.SOUTH)
+    '-' -> Tile.Pipe(Direction.EAST, Direction.WEST)
+    'L' -> Tile.Pipe(Direction.NORTH, Direction.EAST)
+    'J' -> Tile.Pipe(Direction.NORTH, Direction.WEST)
+    '7' -> Tile.Pipe(Direction.SOUTH, Direction.WEST)
+    'F' -> Tile.Pipe(Direction.SOUTH, Direction.EAST)
     'S' -> Tile.Start
     else -> Tile.Ground
 }
 
 
-private enum class Opening {
+private enum class Direction {
     NORTH,
     SOUTH,
     EAST,
