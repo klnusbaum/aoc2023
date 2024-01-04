@@ -47,69 +47,80 @@ private class BoardBuilder {
 private class Board(val tiles: Map<Location, Tile>, val start: Location) {
     fun totalPipeDistance(): Int {
         var previousLocation = start
-        var currentLocation = nextFromStart()
+        var (currentLocation, currentTile) = nextFromStart()
         var distance = 1
         while (currentLocation != start) {
-            val nextLocation = nextLocation(previousLocation, currentLocation)
+            val (nextLocation, nextTile) = nextTile(previousLocation, currentLocation, currentTile)
             previousLocation = currentLocation
             currentLocation = nextLocation
+            currentTile = nextTile
             distance++
         }
         return distance
     }
 
-    private fun nextFromStart(): Location {
+    private fun nextFromStart(): Pair<Location, Tile> {
         val northernLocation = start.toNorth()
-        if (tiles[northernLocation]?.opensOn(Opening.SOUTH) == true) {
-            return northernLocation
+        val northernTile = tiles[northernLocation]
+        if (northernTile?.opensOn(Opening.SOUTH) == true) {
+            return Pair(northernLocation, northernTile)
         }
 
         val southernLocation = start.toSouth()
-        if (tiles[southernLocation]?.opensOn(Opening.NORTH) == true) {
-            return southernLocation
+        val southernTile = tiles[southernLocation]
+        if (southernTile?.opensOn(Opening.NORTH) == true) {
+            return Pair(southernLocation, southernTile)
         }
 
         val westernLocation = start.toWest()
-        if (tiles[westernLocation]?.opensOn(Opening.EAST) == true) {
-            return westernLocation
+        val westernTile = tiles[westernLocation]
+        if (westernTile?.opensOn(Opening.EAST) == true) {
+            return Pair(westernLocation, westernTile)
         }
 
         val easternLocation = start.toEast()
-        if (tiles[easternLocation]?.opensOn(Opening.WEST) == true) {
-            return easternLocation
+        val easternTile = tiles[easternLocation]
+        if (easternTile?.opensOn(Opening.WEST) == true) {
+            return Pair(easternLocation, easternTile)
         }
 
         throw IllegalArgumentException("No tile accessible from start")
     }
 
-    private fun nextLocation(previousLocation: Location, currentLocation: Location): Location {
-        val currentTile = tiles[currentLocation] ?: throw IllegalArgumentException("No Tile at $currentLocation")
-
+    private fun nextTile(
+        previousLocation: Location,
+        currentLocation: Location,
+        currentTile: Tile
+    ): Pair<Location, Tile> {
         if (currentTile.opensOn(Opening.NORTH)) {
             val northernLocation = currentLocation.toNorth()
-            if (tiles[northernLocation]?.opensOn(Opening.SOUTH) == true && northernLocation != previousLocation) {
-                return northernLocation
+            val northernTile = tiles[northernLocation]
+            if (northernTile?.opensOn(Opening.SOUTH) == true && northernLocation != previousLocation) {
+                return Pair(northernLocation, northernTile)
             }
         }
 
         if (currentTile.opensOn(Opening.SOUTH)) {
             val southernLocation = currentLocation.toSouth()
-            if (tiles[southernLocation]?.opensOn(Opening.NORTH) == true && southernLocation != previousLocation) {
-                return southernLocation
+            val southernTile = tiles[southernLocation]
+            if (southernTile?.opensOn(Opening.NORTH) == true && southernLocation != previousLocation) {
+                return Pair(southernLocation, southernTile)
             }
         }
 
         if (currentTile.opensOn(Opening.WEST)) {
             val westernLocation = currentLocation.toWest()
-            if (tiles[westernLocation]?.opensOn(Opening.EAST) == true && westernLocation != previousLocation) {
-                return westernLocation
+            val westernTile = tiles[westernLocation]
+            if (westernTile?.opensOn(Opening.EAST) == true && westernLocation != previousLocation) {
+                return Pair(westernLocation, westernTile)
             }
         }
 
         if (currentTile.opensOn(Opening.EAST)) {
             val easternLocation = currentLocation.toEast()
-            if (tiles[easternLocation]?.opensOn(Opening.WEST) == true && easternLocation != previousLocation) {
-                return easternLocation
+            val easternTile = tiles[easternLocation]
+            if (easternTile?.opensOn(Opening.WEST) == true && easternLocation != previousLocation) {
+                return Pair(easternLocation, easternTile)
             }
         }
 
